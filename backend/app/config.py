@@ -12,7 +12,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Database
 DB_PATH = os.getenv("DB_PATH", str(BASE_DIR / "data" / "app.db"))
-DATABASE_URL = f"sqlite:///{DB_PATH}"
+DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DB_PATH}")
+# Supabase may provide the legacy postgres:// prefix.
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)
+elif DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg://", 1)
 
 # JWT
 SECRET_KEY = os.getenv("SECRET_KEY", "super-secret-key-change-this-in-production")

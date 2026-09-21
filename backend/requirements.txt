@@ -4,6 +4,7 @@ sqlalchemy
 python-jose[cryptography]
 passlib[bcrypt]
 bcrypt<5
+psycopg[binary]
 python-multipart
 pydantic[email]
 yfinance

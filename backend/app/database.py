@@ -6,12 +6,15 @@ from sqlalchemy.orm import sessionmaker
 
 from app.config import DATABASE_URL
 
-# Create SQLite engine
-# check_same_thread=False is required for SQLite with FastAPI
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False}
-)
+engine_kwargs = {}
+if DATABASE_URL.startswith("sqlite"):
+    # check_same_thread=False is required for SQLite with FastAPI.
+    engine_kwargs["connect_args"] = {"check_same_thread": False}
+else:
+    # Recycle idle connections because hosted database connections can expire.
+    engine_kwargs.update(pool_pre_ping=True, pool_recycle=1800)
+
+engine = create_engine(DATABASE_URL, **engine_kwargs)
 
 # Session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
