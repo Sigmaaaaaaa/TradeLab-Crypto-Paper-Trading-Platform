@@ -4,6 +4,14 @@ TradeLab is a small crypto paper-trading web application built for learning and 
 
 > **Important:** TradeLab is a paper-trading simulator. It does not place real orders, connect to a brokerage account, or handle real money.
 
+## Live demo
+
+The deployed application is available here:
+
+[Open TradeLab](https://trade-lab-crypto-paper-trading-plat.vercel.app/login)
+
+Use the registration page to create a demo account, then sign in to access the paper-trading dashboard.
+
 ## Features
 
 - JWT-based user registration and login
