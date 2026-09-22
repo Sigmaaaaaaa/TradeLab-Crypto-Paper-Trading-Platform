@@ -11,7 +11,7 @@ TradeLab is a small crypto paper-trading web application built for learning and 
 - Virtual starting balance of INR 100,000
 - Crypto pair search
 - Per-user watchlist with add and remove support
-- Live Binance WebSocket prices
+- Live Coinbase Exchange WebSocket prices
 - Historical candlestick data through yfinance
 - Lightweight Charts candlestick chart
 - Simulated buy and sell orders
@@ -38,7 +38,7 @@ TradeLab is a small crypto paper-trading web application built for learning and 
 - SQLite
 - JWT with `python-jose`
 - Passlib with bcrypt
-- Binance WebSocket
+- Coinbase Exchange public WebSocket
 - yfinance
 
 ## Project structure
@@ -72,7 +72,7 @@ trading-app/
 - Python 3.10 or newer
 - Node.js 18 or newer
 - npm
-- Internet access for Binance prices and yfinance data
+- Internet access for Coinbase prices and yfinance data
 
 ## Installation
 
@@ -214,14 +214,14 @@ POST /api/trades/sell
 - A sell order increases the virtual balance by `quantity × price`.
 - Selling calculates realized P&L using the average entry price.
 - Open-position unrealized P&L is calculated from the latest live market price.
-- Orders are simulated and are not sent to Binance.
+- - Orders are simulated and are not sent to Coinbase or any exchange.
 
 ## Production and security notes
 
 - Replace the development `SECRET_KEY` before deployment.
 - Do not commit `.env` or `.env.local` files containing secrets.
 - This project uses SQLite for simplicity and local development.
-- Binance and yfinance data can be delayed, unavailable, or rate-limited.
+- Coinbase and yfinance data can be delayed, unavailable, or rate-limited.
 - The application is not financial advice and should not be used with real money.
 
 ## Build the frontend
@@ -233,4 +233,4 @@ npm run build
 
 ## Resume description
 
-> Built TradeLab, a full-stack crypto paper-trading platform using Next.js, React, FastAPI, SQLAlchemy, and SQLite. Implemented JWT authentication, per-user watchlists, Binance WebSocket live prices, historical candlestick charts, simulated buy/sell orders, portfolio balances, open positions, and realized/unrealized P&L.
+> Built TradeLab, a full-stack crypto paper-trading platform using Next.js, React, FastAPI, SQLAlchemy, and SQLite. Implemented JWT authentication, per-user watchlists, Coinbase WebSocket live prices, historical candlestick charts, simulated buy/sell orders, portfolio balances, open positions, and realized/unrealized P&L.

@@ -13,22 +13,22 @@ from app.routers import auth, symbols, watchlist, trades, history, ws
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: create tables + start Binance listener
+    # Startup: create tables + start Coinbase listener
     Base.metadata.create_all(bind=engine)
-    manager.start_binance_listener()
+    manager.start_market_data_listener()
     print("[main] Database tables created / verified")
-    print("[main] Binance WebSocket listener started")
+    print("[main] Coinbase WebSocket listener started")
     
     yield
     
     # Shutdown
-    manager.stop_binance_listener()
+    manager.stop_market_data_listener()
     print("[main] Shutdown complete")
 
 
 app = FastAPI(
     title="Trading App API",
-    description="Paper trading backend with live Binance prices",
+    description="Paper trading backend with live Coinbase prices",
     version="1.0.0",
     lifespan=lifespan
 )

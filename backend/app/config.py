@@ -27,8 +27,27 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
 # Paper trading starting balance (in INR)
 STARTING_BALANCE = 100000.0
 
-# Binance WebSocket base URL
-BINANCE_WS_URL = "wss://stream.binance.com:9443/ws"
+# Coinbase Exchange public market-data WebSocket.
+COINBASE_WS_URL = "wss://ws-feed.exchange.coinbase.com"
+
+# Application symbols mapped to Coinbase product IDs. Symbols remain in the
+# BTCUSDT format throughout the API and frontend.
+COINBASE_PRODUCTS = {
+    "BTCUSDT": "BTC-USD",
+    "ETHUSDT": "ETH-USD",
+    "SOLUSDT": "SOL-USD",
+    "XRPUSDT": "XRP-USD",
+    "ADAUSDT": "ADA-USD",
+    "DOGEUSDT": "DOGE-USD",
+    "AVAXUSDT": "AVAX-USD",
+    "DOTUSDT": "DOT-USD",
+    "LINKUSDT": "LINK-USD",
+    "MATICUSDT": "MATIC-USD",
+    "LTCUSDT": "LTC-USD",
+    "UNIUSDT": "UNI-USD",
+    "ATOMUSDT": "ATOM-USD",
+    "NEARUSDT": "NEAR-USD",
+}
 
 # Allowed crypto pairs (for search + live data)
 ALLOWED_SYMBOLS = [

@@ -9,7 +9,7 @@ from app.utils.validators import validate_symbol
 
 
 # Map our symbols to yfinance tickers
-# Binance pairs → Yahoo Finance crypto tickers
+# Application crypto pairs → Yahoo Finance crypto tickers
 YFINANCE_MAP = {
     "BTCUSDT": "BTC-USD",
     "ETHUSDT": "ETH-USD",

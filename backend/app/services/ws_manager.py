@@ -2,16 +2,16 @@
 
 import asyncio
 import json
-from typing import Dict, Set, List
+from typing import Dict, Set
 from fastapi import WebSocket
 
-from app.config import BINANCE_WS_URL, ALLOWED_SYMBOLS
+from app.config import COINBASE_PRODUCTS, COINBASE_WS_URL
 
 
 class ConnectionManager:
     """
     Manages frontend WebSocket connections and a single background
-    task that listens to Binance and broadcasts ticks to all clients.
+    task that listens to Coinbase and broadcasts ticks to all clients.
     """
 
     def __init__(self):
@@ -22,7 +22,7 @@ class ConnectionManager:
         self.latest_prices: Dict[str, float] = {}
         
         # Background task handle
-        self.binance_task = None
+        self.market_data_task = None
         self._running = False
 
     async def connect(self, websocket: WebSocket):
@@ -54,38 +54,38 @@ class ConnectionManager:
         for conn in dead:
             self.disconnect(conn)
 
-    async def _binance_listener(self):
+    async def _coinbase_listener(self):
         """
-        Connects to Binance combined stream and pushes ticks.
-        We subscribe to all ALLOWED_SYMBOLS in one connection.
+        Connects to Coinbase's public ticker channel and pushes ticks.
+        Coinbase product IDs are translated back to the application's symbols.
         """
         import websockets
         
-        # Build combined stream URL
-        # e.g. btcusdt@trade/ethusdt@trade/...
-        streams = "/".join([f"{s.lower()}@trade" for s in ALLOWED_SYMBOLS])
-        url = f"{BINANCE_WS_URL}/{streams}"
-        
-        print(f"[ws_manager] Connecting to Binance: {url}")
-        
         while self._running:
             try:
-                async with websockets.connect(url, ping_interval=20) as ws:
-                    print("[ws_manager] Connected to Binance WebSocket")
+                async with websockets.connect(COINBASE_WS_URL, ping_interval=20) as ws:
+                    await ws.send(json.dumps({
+                        "type": "subscribe",
+                        "product_ids": list(COINBASE_PRODUCTS.values()),
+                        "channels": ["ticker"],
+                    }))
+                    print("[ws_manager] Connected to Coinbase WebSocket")
+
+                    product_to_symbol = {
+                        product: symbol
+                        for symbol, product in COINBASE_PRODUCTS.items()
+                    }
                     async for raw in ws:
                         if not self._running:
                             break
                         
                         data = json.loads(raw)
-                        
-                        # Combined stream wraps the data
-                        if "data" in data:
-                            trade = data["data"]
-                        else:
-                            trade = data
-                        
-                        symbol = trade.get("s")          # e.g. "BTCUSDT"
-                        price = float(trade.get("p", 0)) # last trade price
+
+                        if data.get("type") != "ticker":
+                            continue
+
+                        symbol = product_to_symbol.get(data.get("product_id"))
+                        price = float(data.get("price", 0))
                         
                         if symbol and price > 0:
                             self.latest_prices[symbol] = price
@@ -98,24 +98,24 @@ class ConnectionManager:
                             })
             
             except Exception as e:
-                print(f"[ws_manager] Binance connection error: {e}")
+                print(f"[ws_manager] Coinbase connection error: {e}")
                 if self._running:
                     print("[ws_manager] Reconnecting in 5 seconds...")
                     await asyncio.sleep(5)
 
-    def start_binance_listener(self):
-        """Start the background Binance listener (call once at startup)."""
-        if self.binance_task is None:
+    def start_market_data_listener(self):
+        """Start the Coinbase listener (call once at startup)."""
+        if self.market_data_task is None:
             self._running = True
-            self.binance_task = asyncio.create_task(self._binance_listener())
-            print("[ws_manager] Binance listener started")
+            self.market_data_task = asyncio.create_task(self._coinbase_listener())
+            print("[ws_manager] Coinbase listener started")
 
-    def stop_binance_listener(self):
+    def stop_market_data_listener(self):
         """Stop the background task."""
         self._running = False
-        if self.binance_task:
-            self.binance_task.cancel()
-            self.binance_task = None
+        if self.market_data_task:
+            self.market_data_task.cancel()
+            self.market_data_task = None
 
 
 # Global singleton instance
