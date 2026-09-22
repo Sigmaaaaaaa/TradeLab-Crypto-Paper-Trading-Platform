@@ -222,7 +222,7 @@ For a deployed frontend, set the backend `FRONTEND_URL` environment variable to
 the exact Vercel origin, for example:
 
 ```env
-FRONTEND_URL=https://trade-lab-crypto-paper-trading-platform.vercel.app
+FRONTEND_URL=https://trade-lab-crypto-paper-trading-plat.vercel.app
 ```
 
 Set these frontend variables in Vercel for the Production environment:
