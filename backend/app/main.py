@@ -3,6 +3,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+import os
 
 from app.database import engine, Base
 from app.services.ws_manager import manager
@@ -33,13 +34,25 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Allow frontend (Next.js) to talk to us
+# Allow local development and the configured production frontend to talk to us.
+frontend_origins = [
+    origin.strip()
+    for origin in os.getenv("FRONTEND_URL", "").split(",")
+    if origin.strip()
+]
+allowed_origins = list(
+    dict.fromkeys(
+        [
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            *frontend_origins,
+        ]
+    )
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

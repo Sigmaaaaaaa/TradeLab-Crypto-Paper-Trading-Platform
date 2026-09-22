@@ -218,6 +218,20 @@ POST /api/trades/sell
 
 ## Production and security notes
 
+For a deployed frontend, set the backend `FRONTEND_URL` environment variable to
+the exact Vercel origin, for example:
+
+```env
+FRONTEND_URL=https://trade-lab-crypto-paper-trading-platform.vercel.app
+```
+
+Set these frontend variables in Vercel for the Production environment:
+
+```env
+NEXT_PUBLIC_API_URL=https://tradelab-crypto-paper-trading-platform.onrender.com
+NEXT_PUBLIC_WS_URL=wss://tradelab-crypto-paper-trading-platform.onrender.com/ws/live
+```
+
 - Replace the development `SECRET_KEY` before deployment.
 - Do not commit `.env` or `.env.local` files containing secrets.
 - This project uses SQLite for simplicity and local development.
